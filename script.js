@@ -1,5 +1,6 @@
 // 要素の取得
 const memoElement = document.getElementById('memo');
+const memoTitleElement = document.getElementById('memo-title');
 const memoListElement = document.getElementById('memo-list');
 const addNoteButton = document.getElementById('add-note');
 const removeNoteButton = document.getElementById('remove-note');
@@ -19,6 +20,12 @@ const loadMemoData = () => {
     const savedData = localStorage.getItem(MEMO_DATA_KEY);
     if (savedData) {
         memoData = JSON.parse(savedData);
+        // 既存のメモデータにタイトルがない場合の処理
+        Object.values(memoData).forEach(memo => {
+            if (!memo.title) {
+                memo.title = `メモ ${Object.keys(memoData).length}`;
+            }
+        });
     } else {
         // 初期メモを作成
         createNewMemo();
@@ -33,11 +40,20 @@ const saveMemoData = () => {
 // 新しいメモを作成する
 const createNewMemo = () => {
     const newId = Date.now().toString();
+    const now = new Date();
+    const defaultTitle = now.toLocaleString('ja-JP', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+    }).replace(/\//g, '-');
+
     const newMemo = {
         id: newId,
-        title: `メモ ${Object.keys(memoData).length + 1}`,
+        title: defaultTitle,
         content: '',
-        createdAt: new Date().toISOString()
+        createdAt: now.toISOString()
     };
 
     memoData[newId] = newMemo;
@@ -54,6 +70,7 @@ const selectMemo = (memoId) => {
 
     currentMemoId = memoId;
     memoElement.value = memoData[memoId].content || '';
+    memoTitleElement.value = memoData[memoId].title || '';
 
     // 選択中のメモをリストでハイライト
     Array.from(memoListElement.options).forEach(option => {
@@ -83,6 +100,27 @@ const updateCurrentMemo = () => {
     if (currentMemoId && memoData[currentMemoId]) {
         memoData[currentMemoId].content = memoElement.value;
         saveMemoData();
+    }
+};
+
+// 現在のメモのタイトルを更新する
+const updateCurrentMemoTitle = () => {
+    if (currentMemoId && memoData[currentMemoId]) {
+        // 空のタイトルの場合、現在日時を設定
+        if (memoTitleElement.value.trim() === '') {
+            const now = new Date();
+            memoData[currentMemoId].title = now.toLocaleString('ja-JP', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            }).replace(/\//g, '-');
+        } else {
+            memoData[currentMemoId].title = memoTitleElement.value;
+        }
+        saveMemoData();
+        renderMemoList(); // メモリストを再描画してタイトル変更を反映
     }
 };
 
@@ -125,6 +163,9 @@ const clearAllMemos = () => {
 const setupEventListeners = () => {
     // メモが変更されたら自動保存
     memoElement.addEventListener('input', updateCurrentMemo);
+
+    // メモタイトルが変更されたら自動保存
+    memoTitleElement.addEventListener('input', updateCurrentMemoTitle);
 
     // メモリストの選択変更
     memoListElement.addEventListener('change', (e) => {
