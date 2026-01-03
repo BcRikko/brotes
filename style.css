@@ -1,22 +1,25 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Courier New', Courier, monospace;
     margin: 0;
     padding: 20px;
-    background-color: #f5f5f5;
+    background-color: #282a36;
+    color: #f8f8f2;
 }
 
 .container {
-    max-width: 800px;
+    max-width: 1000px;
     margin: 0 auto;
-    background-color: white;
+    background-color: #282a36;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid #44475a;
 }
 
 h1 {
     text-align: center;
-    color: #333;
+    color: #bd93f9;
+    text-decoration: underline;
+    font-weight: normal;
+    margin-bottom: 30px;
 }
 
 .button-group {
@@ -25,31 +28,35 @@ h1 {
 }
 
 .button-group button {
-    padding: 10px 15px;
+    padding: 8px 12px;
     margin: 0 5px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
+    background-color: #282a36;
+    color: #f8f8f2;
+    border: 1px solid #44475a;
     cursor: pointer;
+    font-family: 'Courier New', Courier, monospace;
     font-size: 14px;
 }
 
 .button-group button:hover {
-    background-color: #45a049;
+    background-color: #44475a;
+    color: #f8f8f2;
 }
 
 #clear-all {
-    background-color: #f44336;
+    background-color: #282a36;
+    color: #ff5555;
+    border: 1px solid #ff5555;
 }
 
 #clear-all:hover {
-    background-color: #d32f2f;
+    background-color: #ff5555;
+    color: #282a36;
 }
 
 .main-container {
     display: flex;
-    gap: 20px;
+    gap: 30px;
     margin-top: 20px;
 }
 
@@ -57,18 +64,20 @@ h1 {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 15px;
 }
 
 .memo-list-container {
     width: 300px;
-    border-left: 1px solid #ddd;
+    border-left: 1px solid #44475a;
     padding-left: 20px;
 }
 
 .memo-list-container h2 {
     margin-top: 0;
-    color: #333;
+    color: #bd93f9;
+    text-decoration: underline;
+    font-weight: normal;
 }
 
 #memo-list-right {
@@ -80,28 +89,31 @@ h1 {
 }
 
 .memo-list-item {
-    padding: 10px;
-    border: 1px solid #eee;
-    border-radius: 4px;
-    margin-bottom: 5px;
+    padding: 8px;
+    border: 1px solid #282a36;
+    margin-bottom: 2px;
     cursor: pointer;
-    transition: background-color 0.2s;
+    font-family: 'Courier New', Courier, monospace;
+    color: #f8f8f2;
 }
 
 .memo-list-item:hover {
-    background-color: #f5f5f5;
+    background-color: #44475a;
+    color: #f8f8f2;
 }
 
 .memo-list-item.active {
-    background-color: #4CAF50;
-    color: white;
+    background-color: #44475a;
+    color: #f8f8f2;
 }
 
 #memo-title {
     padding: 10px;
     font-size: 16px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    border: 1px solid #44475a;
+    background-color: #282a36;
+    color: #f8f8f2;
+    font-family: 'Courier New', Courier, monospace;
 }
 
 #memo {
@@ -109,14 +121,14 @@ h1 {
     height: 400px;
     padding: 15px;
     font-size: 16px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    border: 1px solid #44475a;
+    background-color: #282a36;
+    color: #f8f8f2;
+    font-family: 'Courier New', Courier, monospace;
     resize: vertical;
     box-sizing: border-box;
 }
 
 #memo:focus {
-    outline: none;
-    border-color: #4CAF50;
-    box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+    outline: 1px solid #bd93f9;
 }
