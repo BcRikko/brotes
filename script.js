@@ -1,6 +1,5 @@
 // 要素の取得
 const memoElement = document.getElementById('memo');
-const memoTitleElement = document.getElementById('memo-title');
 const memoListRightElement = document.getElementById('memo-list-right');
 const addNoteButton = document.getElementById('add-note');
 const removeNoteButton = document.getElementById('remove-note');
@@ -20,21 +19,6 @@ const loadMemoData = () => {
     const savedData = localStorage.getItem(MEMO_DATA_KEY);
     if (savedData) {
         memoData = JSON.parse(savedData);
-        // 既存のメモデータにタイトルがない場合の処理
-        Object.values(memoData).forEach(memo => {
-            if (!memo.title) {
-                // タイトルがない場合は作成日時を使用
-                const createdAt = new Date(memo.createdAt);
-                memo.title = createdAt.toLocaleString('ja-JP', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit'
-                }).replace(/\//g, '-').replace(/:/g, '-');
-            }
-        });
     } else {
         // 初期メモを作成
         createNewMemo();
@@ -50,18 +34,9 @@ const saveMemoData = () => {
 const createNewMemo = () => {
     const newId = Date.now().toString();
     const now = new Date();
-    const defaultTitle = now.toLocaleString('ja-JP', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-    }).replace(/\//g, '-').replace(/:/g, '-');
 
     const newMemo = {
         id: newId,
-        title: defaultTitle,
         content: '',
         createdAt: now.toISOString()
     };
@@ -80,7 +55,6 @@ const selectMemo = (memoId) => {
 
     currentMemoId = memoId;
     memoElement.value = memoData[memoId].content || '';
-    memoTitleElement.value = memoData[memoId].title || '';
 
     // 右側のメモリストでアクティブなメモをハイライト
     const listItems = memoListRightElement.querySelectorAll('.memo-list-item');
@@ -103,7 +77,13 @@ const renderMemoList = () => {
         if (memo.id === currentMemoId) {
             listItem.classList.add('active');
         }
-        listItem.textContent = memo.title;
+
+        // 本文の1行目をタイトルとして使用（改行文字で分割して最初の行を取得）
+        const firstLine = memo.content ? memo.content.split('\n')[0] : '無題のメモ';
+        // タイトルが長すぎる場合は省略
+        const title = firstLine.length > 30 ? firstLine.substring(0, 30) + '...' : firstLine;
+
+        listItem.textContent = title;
         listItem.dataset.id = memo.id;
         listItem.addEventListener('click', () => {
             selectMemo(memo.id);
@@ -121,27 +101,6 @@ const renderMemoList = () => {
 const updateCurrentMemo = () => {
     if (currentMemoId && memoData[currentMemoId]) {
         memoData[currentMemoId].content = memoElement.value;
-        saveMemoData();
-    }
-};
-
-// 現在のメモのタイトルを更新する
-const updateCurrentMemoTitle = () => {
-    if (currentMemoId && memoData[currentMemoId]) {
-        // 空のタイトルの場合、現在日時を設定
-        if (memoTitleElement.value.trim() === '') {
-            const now = new Date();
-            memoData[currentMemoId].title = now.toLocaleString('ja-JP', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            }).replace(/\//g, '-').replace(/:/g, '-');
-        } else {
-            memoData[currentMemoId].title = memoTitleElement.value;
-        }
         saveMemoData();
         renderMemoList(); // メモリストを再描画してタイトル変更を反映
     }
@@ -186,9 +145,6 @@ const clearAllMemos = () => {
 const setupEventListeners = () => {
     // メモが変更されたら自動保存
     memoElement.addEventListener('input', updateCurrentMemo);
-
-    // メモタイトルが変更されたら自動保存
-    memoTitleElement.addEventListener('input', updateCurrentMemoTitle);
 
     // Add Noteボタン
     addNoteButton.addEventListener('click', () => {
