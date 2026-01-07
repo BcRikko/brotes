@@ -159,6 +159,39 @@ const exportNotes = () => {
     link.click();
 };
 
+// リサイズハンドラーの設定
+const setupResizeHandler = () => {
+    const resizeHandle = document.getElementById('resize-handle');
+    const memoListContainer = document.getElementById('memo-list-container');
+    let isResizing = false;
+
+    resizeHandle.addEventListener('mousedown', (e) => {
+        isResizing = true;
+        document.body.style.cursor = 'col-resize';
+        e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isResizing) return;
+
+        // ビューポートの幅を取得
+        const viewportWidth = window.innerWidth;
+
+        // メモリストコンテナの新しい幅を計算（右端からの距離）
+        const newWidth = viewportWidth - e.clientX - 30; // 30pxはパディング等の調整値
+
+        // 幅の最小値と最大値を設定
+        if (newWidth > 150 && newWidth < 600) {
+            memoListContainer.style.width = `${newWidth}px`;
+        }
+    });
+
+    document.addEventListener('mouseup', () => {
+        isResizing = false;
+        document.body.style.cursor = '';
+    });
+};
+
 // イベントリスナーの設定
 const setupEventListeners = () => {
     // メモが変更されたら自動保存
@@ -185,6 +218,7 @@ window.addEventListener('DOMContentLoaded', () => {
     loadMemoData();
     renderMemoList();
     setupEventListeners();
+    setupResizeHandler(); // リサイズハンドラーの設定を追加
 
     // 最初のメモを選択
     if (currentMemoId) {
